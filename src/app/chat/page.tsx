@@ -1,9 +1,29 @@
-import { UserButton } from "@clerk/nextjs";
+"use client";
+
+import { StreamChat } from "stream-chat";
+import {
+  Channel,
+  ChannelHeader,
+  Chat,
+  MessageInput,
+  MessageList,
+  Thread,
+  Window,
+} from "stream-chat-react";
 
 const ChatPage = () => {
   return (
     <div>
-      ChatPage <UserButton afterSignOutUrl="/" />
+      <Chat client={chatClient}>
+        <Channel channel={channel}>
+          <Window>
+            <ChannelHeader />
+            <MessageList />
+            <MessageInput />
+          </Window>
+          <Thread />
+        </Channel>
+      </Chat>
     </div>
   );
 };
