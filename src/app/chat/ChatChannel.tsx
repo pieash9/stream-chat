@@ -9,13 +9,14 @@ import {
 
 interface ChatChannelProps {
   show: boolean;
+  hideChannelOnThread: boolean;
 }
 
-const ChatChannel = ({ show }: ChatChannelProps) => {
+const ChatChannel = ({ show, hideChannelOnThread }: ChatChannelProps) => {
   return (
-    <div className={`"size-full" ${show ? "block" : "hidden"}`}>
+    <div className={`size-full ${show ? "block" : "hidden"}`}>
       <Channel>
-        <Window>
+        <Window hideOnThread={hideChannelOnThread}>
           <ChannelHeader />
           <MessageList />
           <MessageInput />
