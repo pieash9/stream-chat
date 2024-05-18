@@ -37,31 +37,33 @@ const ChatPage = () => {
     );
   }
   return (
-    <div className="h-screen">
-      <Chat client={chatClient}>
-        <div className="flex justify-center border-b border-b-[#DBDDE1] p-3 md:hidden">
-          <button onClick={() => setChatSidebarOpen(!chatSidebarOpen)}>
-            {!chatSidebarOpen ? (
-              <span className="flex items-center gap-1">
-                <Menu /> Menu
-              </span>
-            ) : (
-              <X />
-            )}
-          </button>
-        </div>
-        <div className="flex h-full flex-row">
-          <ChatSidebar
-            user={user}
-            show={isLargeScreen || chatSidebarOpen}
-            onClose={handleSidebarOnClose}
-          />
-          <ChatChannel
-            show={isLargeScreen || !chatSidebarOpen}
-            hideChannelOnThread={!isLargeScreen}
-          />
-        </div>
-      </Chat>
+    <div className="h-screen bg-gray-100 xl:px-20 xl:py-8">
+      <div className="m-auto flex h-full min-w-[350px] max-w-[1600px] flex-col shadow-sm">
+        <Chat client={chatClient}>
+          <div className="flex justify-center border-b border-b-[#DBDDE1] p-3 md:hidden">
+            <button onClick={() => setChatSidebarOpen(!chatSidebarOpen)}>
+              {!chatSidebarOpen ? (
+                <span className="flex items-center gap-1">
+                  <Menu /> Menu
+                </span>
+              ) : (
+                <X />
+              )}
+            </button>
+          </div>
+          <div className="flex h-full flex-row overflow-y-auto">
+            <ChatSidebar
+              user={user}
+              show={isLargeScreen || chatSidebarOpen}
+              onClose={handleSidebarOnClose}
+            />
+            <ChatChannel
+              show={isLargeScreen || !chatSidebarOpen}
+              hideChannelOnThread={!isLargeScreen}
+            />
+          </div>
+        </Chat>
+      </div>
     </div>
   );
 };

@@ -6,7 +6,8 @@ import {
 import Menubar from "./Menubar";
 
 import type { UserResource } from "@clerk/types";
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
+import UsersMenu from "./UsersMenu";
 
 interface ChatSidebarProps {
   user: UserResource;
@@ -15,6 +16,12 @@ interface ChatSidebarProps {
 }
 
 const ChatSidebar = ({ user, show, onClose }: ChatSidebarProps) => {
+  const [usersMenuOpen, setUsersMenuOpen] = useState(false);
+
+  useEffect(() => {
+    if (!show) return setUsersMenuOpen(false);
+  }, [show]);
+
   const channelPreviewCustom = useCallback(
     (props: ChannelPreviewUIComponentProps) => (
       <ChannelPreviewMessenger
@@ -29,9 +36,19 @@ const ChatSidebar = ({ user, show, onClose }: ChatSidebarProps) => {
   );
   return (
     <div
-      className={`w-full flex-col md:max-w-[360px] ${show ? "flex" : "hidden"}`}
+      className={`relative w-full flex-col md:max-w-[360px] ${show ? "flex" : "hidden"}`}
     >
-      <Menubar />
+      {usersMenuOpen && (
+        <UsersMenu
+          loggedInUser={user}
+          onClose={() => setUsersMenuOpen(false)}
+          onChannelSelected={() => {
+            setUsersMenuOpen(false);
+            onClose();
+          }}
+        />
+      )}
+      <Menubar onUserMenuClick={() => setUsersMenuOpen(true)} />
       <ChannelList
         filters={{
           type: "messaging",
