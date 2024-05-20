@@ -7,6 +7,7 @@ import {
 import type { UserResource } from "@clerk/types";
 import { Channel, UserResponse } from "stream-chat";
 import { ArrowLeft } from "lucide-react";
+import LoadingButton from "@/components/LoadingButton";
 
 interface UsersMenuProps {
   loggedInUser: UserResource;
@@ -21,6 +22,11 @@ const UsersMenu = ({
 }: UsersMenuProps) => {
   const { client, setActiveChannel } = useChatContext();
   const [users, setUsers] = useState<(UserResponse & { image?: string })[]>();
+  const [moreUsersLoading, setMoreUsersLoading] = useState(false);
+  const [endOfPaginationReached, setEndOfPaginationReached] =
+    useState<boolean>();
+
+  const pageSize = 2;
 
   useEffect(() => {
     async function loadInitialUsers() {
@@ -33,8 +39,10 @@ const UsersMenu = ({
           {
             id: 1,
           },
+          { limit: pageSize + 1 },
         );
-        setUsers(response.users);
+        setUsers(response.users.slice(0, pageSize));
+        setEndOfPaginationReached(response.users.length <= pageSize);
       } catch (error) {
         console.log(error);
         alert("Error loading users");
@@ -75,6 +83,14 @@ const UsersMenu = ({
             userClicked={startChatWithUser}
           />
         ))}
+        {endOfPaginationReached === false && (
+          <LoadingButton
+            className="m-auto mb-3 w-[80%]"
+            loading={moreUsersLoading}
+          >
+            Load More Users
+          </LoadingButton>
+        )}
       </div>
     </div>
   );
