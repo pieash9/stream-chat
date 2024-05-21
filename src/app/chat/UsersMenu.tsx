@@ -26,11 +26,11 @@ const UsersMenu = ({
   const [endOfPaginationReached, setEndOfPaginationReached] =
     useState<boolean>();
 
-  const pageSize = 2;
+  const pageSize = 10;
 
   useEffect(() => {
     async function loadInitialUsers() {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // await new Promise((resolve) => setTimeout(resolve, 1000));
       try {
         const response = await client.queryUsers(
           {
@@ -50,6 +50,32 @@ const UsersMenu = ({
     }
     loadInitialUsers();
   }, [client, loggedInUser.id]);
+
+  const loadMoreUsers = async () => {
+    setMoreUsersLoading(true);
+    // await new Promise((resolve) => setTimeout(resolve, 1000));
+
+    try {
+      const lastUserId = users?.[users.length - 1].id;
+      if (!lastUserId) return;
+
+      const response = await client.queryUsers(
+        {
+          $and: [{ id: { $ne: loggedInUser.id } }, { id: { $gt: lastUserId } }],
+        },
+        { id: 1 },
+        { limit: pageSize + 1 },
+      );
+
+      setUsers([...users, ...response.users.slice(0, pageSize)]);
+      setEndOfPaginationReached(response.users.length <= pageSize);
+    } catch (error) {
+      console.log(error);
+      alert("Error loading users");
+    } finally {
+      setMoreUsersLoading(false);
+    }
+  };
 
   const handleChannelSelected = (channel: Channel) => {
     setActiveChannel(channel);
@@ -85,6 +111,7 @@ const UsersMenu = ({
         ))}
         {endOfPaginationReached === false && (
           <LoadingButton
+            onClick={loadMoreUsers}
             className="m-auto mb-3 w-[80%]"
             loading={moreUsersLoading}
           >
